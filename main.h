@@ -4,6 +4,8 @@
  *  Created on: 19 mar. 2020
  *      Author: droma
  */
+#include <dyn_app_motor.h>
+#include <dyn_app_sensor.h>
 
 #ifndef MAIN_H_
 #define MAIN_H_

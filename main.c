@@ -42,6 +42,10 @@ int main(void) {
     dyn_led_read(1, &tmp);
     assert(tmp == 1);
 
+    wheelUnlock(3);
+    wheelUnlock(2);
+    endlessSpin(100, FORWARD);
+
     printf("\n************************\n");
     printf("Test passed successfully\n");
 

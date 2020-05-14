@@ -44,7 +44,6 @@ byte TxPacket(byte bID, byte bParameterLength, byte bInstruction,
 	TxBuffer[3] = bParameterLength + 2; //Length(Parameter,Instruction,Checksum)
 	TxBuffer[4] = bInstruction;    //Instrucci� que enviem al M�dul
 
-	//TODO: La instrucci� no ha de poder modificar les primeres 5 instruccions
 
     if ((Parametros[0] < 6) && (bInstruction == 3)) {//si se intenta escribir en una direccion <= 0x05,
         //emitir mensaje de error de direccion prohibida:
@@ -81,7 +80,7 @@ struct RxReturn RxPacket(void) {
     respuesta.idx = 0;
 
     f_Sentit_Dades_Rx();   //Ponemos la linea half duplex en Rx
-    f_Activa_Timer_TimeOut();
+    //f_Activa_Timer_TimeOut();
 
     for (bCount = 0; bCount < 4; bCount++) {
         f_rx_uart_byte(&respuesta);
