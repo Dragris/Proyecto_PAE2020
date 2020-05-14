@@ -8,6 +8,13 @@
 #ifndef DYN_TEST_MOVEMENT_SIMULATOR_H_
 #define DYN_TEST_MOVEMENT_SIMULATOR_H_
 
+#define DYN_REG__GOAL_SPEED_L 0x20
+#define DYN_REG__GOAL_SPEED_H 0x21
+
+#define DYN_REG__IR_LEFT 0x1A
+#define DYN_REG__IR_CENTER 0x1B
+#define DYN_REG__IR_RIGHT 0x1C
+
 #include <stdbool.h>
 #include <stdint.h>
 #include <time.h>

@@ -131,13 +131,13 @@ void endlessSpin(int speed, enum dir direction){
 
 	switch(direction) {
 	case FORWARD: //Nos movemos hacia adelante
-	    setEngine(2, speed, CCW);
+	    setEngine(2, speed, CW);
 	    setEngine(3, speed, CW);
 		engineLEDOn(BOTH);
 		break;
 
 	case REVERSE: //Nos movemos hacia atrás
-        setEngine(2, speed, CW);
+        setEngine(2, speed, CCW);
         setEngine(3, speed, CCW);
 		engineLEDOn(BOTH);
 		break;
@@ -155,7 +155,7 @@ void endlessSpin(int speed, enum dir direction){
 void stopEngines(void){
     //Ponemos la velocidad de los motores a 0 y les damos orientación como si fuese adelante
     //La orientación no es necesaria
-    setEngine(2, 0, CCW);
+    setEngine(2, 0, CW);
     setEngine(3, 0, CW);
     engineLEDOff();
 }
@@ -172,7 +172,7 @@ void endlessDorifto(int speed, enum dir direction){
 
 	switch(direction){
 	case RIGHT:
-		setEngine(2, speed, CCW);
+		setEngine(2, speed, CW);
 		engineLEDOn(RIGHT);
 		break;
 

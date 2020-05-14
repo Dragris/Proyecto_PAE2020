@@ -1,0 +1,3 @@
+C:/Users/dragr/CLionProjects/Proyecto_PAE2020/cmake-build-debug/CMakeFiles/p4_pc_joystick2_habitacion.dir
+C:/Users/dragr/CLionProjects/Proyecto_PAE2020/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/dragr/CLionProjects/Proyecto_PAE2020/cmake-build-debug/CMakeFiles/rebuild_cache.dir
