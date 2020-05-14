@@ -1,0 +1,2 @@
+python plot_movement.py
+pause
