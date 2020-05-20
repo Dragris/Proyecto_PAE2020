@@ -42,9 +42,11 @@ int main(void) {
     dyn_led_read(1, &tmp);
     assert(tmp == 1);
 
+    //Activamos las ruedas y paramos el motor
     wheelUnlock(3);
     wheelUnlock(2);
-    endlessSpin(100, FORWARD);
+    stopEngines();
+
 
     printf("\n************************\n");
     printf("Test passed successfully\n");
@@ -55,10 +57,16 @@ int main(void) {
     printf("Pulsar 'q' para terminar, qualquier tecla para seguir\n");
     fflush(stdout);//	return 0;
 
+
+    //Movemos el robot hacia adelante
+    endlessMove(700, FORWARD);
     while (estado != Quit) {
         if (simulator_finished) {
             break;
         }
+
+
+
         Get_estado(&estado, &estado_anterior);
         if (estado != estado_anterior) {
             Set_estado_anterior(estado);

@@ -101,11 +101,11 @@ void setEngine(int id_module, int speed, enum dir direction){
         switch(direction){
             case CW:
                 //Bit 3 == 1
-                speed_H = (speed >> 8) + 5;
+                speed_H = (speed >> 8) + 4;
                 break;
             case CCW:
                 //Bit 3 == 0
-                speed_H = (speed >> 8) + 1;
+                speed_H = (speed >> 8) + 3;
                 break;
             default:
                 return;
@@ -127,7 +127,7 @@ void setEngine(int id_module, int speed, enum dir direction){
  * @param speed int [0, 1023]
  * @param direction
  */
-void endlessSpin(int speed, enum dir direction){
+void endlessMove(int speed, enum dir direction){
 
 	switch(direction) {
 	case FORWARD: //Nos movemos hacia adelante

@@ -18,7 +18,7 @@ enum dir{
 void engineLEDOn(enum dir direction);
 void engineLEDOff(void);
 void engineLEDRead(void);
-void endlessSpin(int speed, enum dir direction);
+void endlessMove(int speed, enum dir direction);
 void stopEngines(void);
 void wheelUnlock(int id_module);
 void endlessDorifto(int speed, enum dir direction);

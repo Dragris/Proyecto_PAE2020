@@ -18,7 +18,7 @@
 #include "dyn_instr.h"
 #include "dyn_emu.h"
 
-#define OUTPUT_FILE "movement.log"
+#define OUTPUT_FILE "../movement.log"
 FILE *fichero;
 
 static clock_t t_last_upd;
