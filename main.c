@@ -13,6 +13,9 @@
 
 uint8_t estado = Ninguno, estado_anterior = Ninguno, finalizar = 0;
 uint32_t indice;
+bool activate, dead_end;
+int norm_speed = 500, maneuver_speed = 300;
+int obstacle_dist = 100, min_obstacle_dist = 50; //Let's hope this is 10mm and 5mm
 
 /**
  * main.c
@@ -42,12 +45,6 @@ int main(void) {
     dyn_led_read(1, &tmp);
     assert(tmp == 1);
 
-    //Activamos las ruedas y paramos el motor
-    wheelUnlock(3);
-    wheelUnlock(2);
-    stopEngines();
-
-
     printf("\n************************\n");
     printf("Test passed successfully\n");
 
@@ -57,14 +54,32 @@ int main(void) {
     printf("Pulsar 'q' para terminar, qualquier tecla para seguir\n");
     fflush(stdout);//	return 0;
 
+    //Unlock infinite spin of engines and we stop them
+    wheelUnlock(LEFT_ENGINE);
+    wheelUnlock(RIGHT_ENGINE);
+    stopEngines();
 
-    //Movemos el robot hacia adelante
-    endlessMove(700, FORWARD);
+    endlessDorifto(maneuver_speed, LEFT);
+    endlessMove(norm_speed, FORWARD);
     while (estado != Quit) {
         if (simulator_finished) {
             break;
         }
 
+        /**
+         * Revisamos que tengamos el bot activado.
+         * Si está desactivado se quedará quieto.
+         */
+        if(activate) {
+            //Fetching sensor reads
+            int obstacle_L = sensorRead(3, 0X1A);
+            int obstacle_C = sensorRead(3, 0X1B);
+            int obstacle_R = sensorRead(3, 0X1C);
+
+
+
+
+        }
 
 
         Get_estado(&estado, &estado_anterior);
@@ -83,10 +98,13 @@ int main(void) {
                     printf("\n");
                     break;
                 case Up:
-
+                    //Activamos el bot
+                    activate = 1;
                     break;
                 case Down:
-
+                    //Desactivamos y paramos el bot
+                    activate = 0;
+                    stopEngines();
                     break;
                 case Left:
                     //Comprobaremos si detectamos las esquinas de la pared izquierda:

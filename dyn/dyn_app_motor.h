@@ -5,6 +5,9 @@
 #include <stdint.h>
 #include "dyn_instr.h"
 
+#define RIGHT_ENGINE 3
+#define LEFT_ENGINE 2
+
 enum dir{
 	FORWARD,
 	REVERSE,

@@ -48,8 +48,8 @@ void engineLEDOff(void) {
 	 param_aux[0] = 0;
 
 
-	 dyn_write(2, 0x19, 1, param);   //Enviamos al motor 2 y comprobamos que se reciben los datos
-	 dyn_write(3, 0x19, 1, param_aux);   //Enviamos al motor 3 y comprobamos que se reciben los datos
+	 dyn_write(LEFT_ENGINE, 0x19, 1, param);   //Enviamos al motor 2 y comprobamos que se reciben los datos
+	 dyn_write(RIGHT_ENGINE, 0x19, 1, param_aux);   //Enviamos al motor 3 y comprobamos que se reciben los datos
 }
 
 /**
@@ -60,8 +60,8 @@ void engineLEDRead(void){
     uint8_t right;
 
     //El registro que indica los LEDs se encuentra en 0x19
-	dyn_read_byte(3, 0x19,  &left);
-	dyn_read_byte(2, 0x19, &right);
+	dyn_read_byte(RIGHT_ENGINE, 0x19,  &left);
+	dyn_read_byte(LEFT_ENGINE, 0x19, &right);
 
 	printf("\n LED engine 2: %d", right);
 	printf("\n LED engine 3: %d\n", left);
@@ -100,12 +100,12 @@ void setEngine(int id_module, int speed, enum dir direction){
         //Es el bit nº3 el que controla que sea CW o CCW 0100
         switch(direction){
             case CW:
-                //Bit 3 == 1
-                speed_H = (speed >> 8) + 4;
+                //Bit 3 == 0
+                speed_H = (speed >> 8);
                 break;
             case CCW:
-                //Bit 3 == 0
-                speed_H = (speed >> 8) + 3;
+                //Bit 3 == 1
+                speed_H = (speed >> 8) + 4;
                 break;
             default:
                 return;
@@ -131,14 +131,14 @@ void endlessMove(int speed, enum dir direction){
 
 	switch(direction) {
 	case FORWARD: //Nos movemos hacia adelante
-	    setEngine(2, speed, CW);
-	    setEngine(3, speed, CW);
+	    setEngine(LEFT_ENGINE, speed, CW);
+	    setEngine(RIGHT_ENGINE, speed, CW);
 		engineLEDOn(BOTH);
 		break;
 
 	case REVERSE: //Nos movemos hacia atrás
-        setEngine(2, speed, CCW);
-        setEngine(3, speed, CCW);
+        setEngine(LEFT_ENGINE, speed, CCW);
+        setEngine(RIGHT_ENGINE, speed, CCW);
 		engineLEDOn(BOTH);
 		break;
 
@@ -155,8 +155,8 @@ void endlessMove(int speed, enum dir direction){
 void stopEngines(void){
     //Ponemos la velocidad de los motores a 0 y les damos orientación como si fuese adelante
     //La orientación no es necesaria
-    setEngine(2, 0, CW);
-    setEngine(3, 0, CW);
+    setEngine(LEFT_ENGINE, 0, CW);
+    setEngine(RIGHT_ENGINE, 0, CW);
     engineLEDOff();
 }
 
@@ -172,12 +172,14 @@ void endlessDorifto(int speed, enum dir direction){
 
 	switch(direction){
 	case RIGHT:
-		setEngine(2, speed, CW);
+		setEngine(LEFT_ENGINE, speed, CW);
+		setEngine(RIGHT_ENGINE, speed, CCW);
 		engineLEDOn(RIGHT);
 		break;
 
 	case LEFT:
-        setEngine(3, speed, CW);
+        setEngine(LEFT_ENGINE, speed, CCW);
+        setEngine(RIGHT_ENGINE, speed, CW);
         engineLEDOn(LEFT);
 		break;
 
@@ -200,10 +202,10 @@ void readSpeed(void){
     uint8_t right_H;
     //Pedimos la información indiviual de cada registro.
     //Esto lo separa en speed_L y speed_H
-	dyn_read_byte(3, 0x20, &left_L);
-	dyn_read_byte(2, 0x20, &right_L);
-	dyn_read_byte(3, 0x21, &left_H);
-    dyn_read_byte(2, 0x21, &right_H);
+	dyn_read_byte(RIGHT_ENGINE, 0x20, &left_L);
+	dyn_read_byte(LEFT_ENGINE, 0x20, &right_L);
+	dyn_read_byte(RIGHT_ENGINE, 0x21, &left_H);
+    dyn_read_byte(LEFT_ENGINE, 0x21, &right_H);
 
 	printf("\n Speed engine 2: %d \tDireccion: %d", right_L, right_H);
 	printf("\n Speed engine 3: %d \tDireccion: %d\n", left_L, left_H);

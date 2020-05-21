@@ -95,6 +95,9 @@ void calculate_new_position() {
     robot_pos_str.v_l = CNTS_2_MM * robot_pos_str.iv_l;
     robot_pos_str.v_r = CNTS_2_MM * robot_pos_str.iv_r;
 
+    //int test_L = robot_pos_str.v_l;
+    //int test_R = robot_pos_str.v_r;
+
     if (robot_pos_str.iv_l == robot_pos_str.iv_r) {
         robot_pos_str.x_p += robot_pos_str.v_l * DELTA_T * cos(robot_pos_str.theta);
         robot_pos_str.y_p += robot_pos_str.v_r * DELTA_T * sin(robot_pos_str.theta);

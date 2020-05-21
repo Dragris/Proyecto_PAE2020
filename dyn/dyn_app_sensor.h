@@ -5,14 +5,14 @@
 #include <stdint.h>
 #include "dyn_instr.h"
 
-#define READ 0x02
+#define SENSOR_ID 1
 typedef uint8_t byte;
 
 
-void setDistanceReading(byte ID, unsigned int distance);
-int readObsDetDistance(int ID, byte position);
-int sensorRead(byte ID, byte sensor);
-int getObstacleFlag(byte ID);
+void setDistanceReading(unsigned int distance);
+int readObsDetDistance(byte position);
+int sensorRead(byte sensor);
+int getObstacleFlag();
 
 
 #endif /* DYN_SENSOR_H_ */
