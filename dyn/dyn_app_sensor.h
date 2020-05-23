@@ -5,7 +5,6 @@
 #include <stdint.h>
 #include "dyn_instr.h"
 
-#define SENSOR_ID 1
 typedef uint8_t byte;
 
 

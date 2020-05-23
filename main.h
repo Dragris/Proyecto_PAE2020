@@ -7,13 +7,15 @@
 #include <dyn_app_motor.h>
 #include <dyn_app_sensor.h>
 
-#ifndef MAIN_H_
-#define MAIN_H_
+//For sensor and engine ID go to each .h file.
 
 enum wall{
     LEFT_W,
     RIGHT_W
 };
+
+#ifndef MAIN_H_
+#define MAIN_H_
 
 /* Set project wide debug level
  *   1.
