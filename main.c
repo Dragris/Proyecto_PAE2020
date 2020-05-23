@@ -13,9 +13,10 @@
 
 uint8_t estado = Ninguno, estado_anterior = Ninguno, finalizar = 0;
 uint32_t indice;
-bool activate, dead_end;
+bool activate = true, found_wall = false, aux_dead_end = false, dead_end = false;
 int norm_speed = 500, maneuver_speed = 300;
-int obstacle_dist = 100, min_obstacle_dist = 50; //Let's hope this is 10mm and 5mm
+int obstacle_dist = 10, min_obstacle_dist = 5; //Let's hope this is 10mm and 5mm
+enum wall thisWall = LEFT_W; //Default wall must be to robot's left
 
 /**
  * main.c
@@ -59,8 +60,7 @@ int main(void) {
     wheelUnlock(RIGHT_ENGINE);
     stopEngines();
 
-    endlessDorifto(maneuver_speed, LEFT);
-    endlessMove(norm_speed, FORWARD);
+    //endlessMove(norm_speed, FORWARD);
     while (estado != Quit) {
         if (simulator_finished) {
             break;
@@ -72,12 +72,108 @@ int main(void) {
          */
         if(activate) {
             //Fetching sensor reads
-            int obstacle_L = sensorRead(3, 0X1A);
-            int obstacle_C = sensorRead(3, 0X1B);
-            int obstacle_R = sensorRead(3, 0X1C);
+            int sens_L = sensorRead(0X1A);
+            int sens_C = sensorRead(0X1B);
+            int sens_R = sensorRead(0X1C);
+            if(sens_L == 0 && sens_C == 0 && sens_R == 0){
+                continue; //Si todos los sensores leen 0 por algún error en lectura saltamos el bucle
+            }
 
 
+            if (found_wall){
+                switch(thisWall){
+                    case LEFT_W:
+                        if (sens_L <= min_obstacle_dist && sens_C <= min_obstacle_dist && sens_R <= min_obstacle_dist ){
+                            stopEngines(); //Paramos los motores y pasamos al modo camino sin salida
+                            dead_end = true;
+                            found_wall = false;
+                            break; //Salimos del switch
+                        }
 
+                        if (sens_L <= min_obstacle_dist){
+                            endlessDorifto(maneuver_speed, RIGHT); //Giramos un poco a la derecha para no rozar la pared
+                        } else if (sens_C <= obstacle_dist) {
+                            endlessDorifto(norm_speed, RIGHT); //Giramos mucho a la derecha para no estrellarnos
+                        } else if (sens_R <= min_obstacle_dist){
+                            endlessDorifto(maneuver_speed, LEFT); //Giramos a la izquierda un poco para no rozar por la derecha
+                        } else if (sens_L >= obstacle_dist){
+                            endlessDorifto(maneuver_speed, LEFT); //Giramos a la izquierda para no alejarnos de la pared
+                        }
+                        break;
+
+                    case RIGHT_W:
+                        if (sens_L <= min_obstacle_dist && sens_C <= min_obstacle_dist && sens_R <= min_obstacle_dist ){
+                            stopEngines(); //Paramos los motores y pasamos al modo camino sin salida
+                            dead_end = true;
+                            found_wall = false;
+                            break; //Salimos del switch
+                        }
+
+                        if (sens_R <= min_obstacle_dist){
+                            endlessDorifto(maneuver_speed, LEFT); //Giramos un poco a la derecha para no rozar la pared
+                        } else if (sens_C <= obstacle_dist) {
+                            endlessDorifto(norm_speed, LEFT); //Giramos mucho a la derecha para no estrellarnos
+                        } else if (sens_L <= min_obstacle_dist){
+                            endlessDorifto(maneuver_speed, RIGHT); //Giramos a la izquierda un poco para no rozar por la derecha
+                        } else if (sens_R >= obstacle_dist){
+                            endlessDorifto(maneuver_speed, RIGHT); //Giramos a la izquierda para no alejarnos de la pared
+                        }
+                        break;
+                }
+
+
+            } else if (dead_end){
+                if (sens_L >= min_obstacle_dist && sens_C >= min_obstacle_dist && sens_R >= min_obstacle_dist && !aux_dead_end){
+                    //Giramos 180º y seguimos con la pared
+                    //TODO giro 180º
+                    endlessDorifto(norm_speed,LEFT);
+                    found_wall = true;
+                    dead_end = false;
+                } else {
+                    //Nos movemos marcha atrás
+                    aux_dead_end = true;
+                    endlessMove(norm_speed, REVERSE);
+                    switch (thisWall) {
+                        case LEFT_W:
+                            if (sens_R > min_obstacle_dist){
+                                //TODO Giramos 90º a la derecha
+                                //Provisional
+                                endlessDorifto(norm_speed, RIGHT);
+                                aux_dead_end = false;
+                            }
+                            break;
+
+                        case RIGHT_W:
+                            if (sens_L > min_obstacle_dist){
+                                //TODO Giramos 90º a la izquierda
+                                //Provisional
+                                endlessDorifto(norm_speed, LEFT);
+                                aux_dead_end = false;
+                            }
+                            break;
+                    }
+                }
+
+
+            } else if (!found_wall) {
+                //Si se activa cualquiera de estos if es porque hemos encontrado una pared así que pasaremos al modo "pared"
+                if (sens_L <= obstacle_dist) {
+                    endlessDorifto(maneuver_speed, LEFT); //Obligamos el encuentro con la pared
+                    found_wall = true;
+                } else if(sens_C <= obstacle_dist){ //Si nos encontramos una pared de frente priorizamos dejarla a la izquierda del robot
+                    endlessDorifto(norm_speed, RIGHT);
+                    found_wall = true;
+                }
+                else if(sens_R <= obstacle_dist){ //Si nos encontramos la pared por la derecha cambiamos la pared a la derecha
+                    thisWall = RIGHT_W;
+                    found_wall = true;
+                }else {
+                    endlessMove(norm_speed, FORWARD);
+                }
+            } else{
+                stopEngines();
+                //TODO PRINT ERROR
+            }
 
         }
 

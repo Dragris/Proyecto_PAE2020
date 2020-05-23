@@ -1,3 +1,4 @@
+#include <zconf.h>
 #include "dyn_app_motor.h"
 /**
  *
@@ -220,4 +221,11 @@ void readSpeed(void){
  */
 int readRegister(int id_module, int reg_addr, uint8_t* ret_val){
     return dyn_read_byte(id_module, reg_addr, ret_val);
+}
+
+void turnAmount(int degree, enum dir direction){
+    endlessDorifto(150, direction);
+    //Esperamos X grados * 28.5
+    usleep(degree*28.5*1000); //Esperamos microsegundos *1000 para ms
+    stopEngines();
 }

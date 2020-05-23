@@ -10,6 +10,11 @@
 #ifndef MAIN_H_
 #define MAIN_H_
 
+enum wall{
+    LEFT_W,
+    RIGHT_W
+};
+
 /* Set project wide debug level
  *   1.
  *   2. Store movement positions
