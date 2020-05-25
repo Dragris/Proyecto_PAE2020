@@ -79,6 +79,10 @@ int main(void) {
                 continue; //Si todos los sensores leen 0 por algún error en lectura saltamos el bucle
             }
 
+            /**
+             * En todas los "subestados" en los que se realiza un giro, después del giro damos orden de ir hacia adelante
+             * esto es porque el giro es sobre el centro del robot, no sobre la marcha.
+             */
 
             if (found_wall){
                 switch(thisWall){
@@ -92,12 +96,16 @@ int main(void) {
 
                         if (sens_L <= min_obstacle_dist){
                             endlessDorifto(maneuver_speed, RIGHT); //Giramos un poco a la derecha para no rozar la pared
+                            endlessMove(maneuver_speed, FORWARD);
                         } else if (sens_C <= obstacle_dist) {
                             endlessDorifto(norm_speed, RIGHT); //Giramos mucho a la derecha para no estrellarnos
+                            endlessMove(maneuver_speed, FORWARD);
                         } else if (sens_R <= min_obstacle_dist){
                             endlessDorifto(maneuver_speed, LEFT); //Giramos a la izquierda un poco para no rozar por la derecha
+                            endlessMove(maneuver_speed, FORWARD);
                         } else if (sens_L >= obstacle_dist){
                             endlessDorifto(maneuver_speed, LEFT); //Giramos a la izquierda para no alejarnos de la pared
+                            endlessMove(maneuver_speed, FORWARD);
                         }
                         break;
 
@@ -111,12 +119,16 @@ int main(void) {
 
                         if (sens_R <= min_obstacle_dist){
                             endlessDorifto(maneuver_speed, LEFT); //Giramos un poco a la derecha para no rozar la pared
+                            endlessMove(maneuver_speed, FORWARD);
                         } else if (sens_C <= obstacle_dist) {
                             endlessDorifto(norm_speed, LEFT); //Giramos mucho a la derecha para no estrellarnos
+                            endlessMove(maneuver_speed, FORWARD);
                         } else if (sens_L <= min_obstacle_dist){
                             endlessDorifto(maneuver_speed, RIGHT); //Giramos a la izquierda un poco para no rozar por la derecha
+                            endlessMove(maneuver_speed, FORWARD);
                         } else if (sens_R >= obstacle_dist){
                             endlessDorifto(maneuver_speed, RIGHT); //Giramos a la izquierda para no alejarnos de la pared
+                            endlessMove(maneuver_speed, FORWARD);
                         }
                         break;
                 }
@@ -126,7 +138,8 @@ int main(void) {
                 if (sens_L >= min_obstacle_dist && sens_C >= min_obstacle_dist && sens_R >= min_obstacle_dist && !aux_dead_end){
                     //Giramos 180º y seguimos con la pared
                     //TODO giro 180º
-                    endlessDorifto(norm_speed,LEFT);
+                    turnAmount(180, LEFT);
+                    endlessMove(maneuver_speed, FORWARD);
                     found_wall = true;
                     dead_end = false;
                 } else {
@@ -139,6 +152,7 @@ int main(void) {
                                 //TODO Giramos 90º a la derecha
                                 //Provisional
                                 endlessDorifto(norm_speed, RIGHT);
+                                endlessMove(maneuver_speed, FORWARD);
                                 aux_dead_end = false;
                             }
                             break;
@@ -148,6 +162,7 @@ int main(void) {
                                 //TODO Giramos 90º a la izquierda
                                 //Provisional
                                 endlessDorifto(norm_speed, LEFT);
+                                endlessMove(maneuver_speed, FORWARD);
                                 aux_dead_end = false;
                             }
                             break;
