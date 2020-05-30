@@ -209,8 +209,8 @@ void turn(int speed, enum dir direction){
             break;
 
         case LEFT:
-            setEngine(LEFT_ENGINE, speed, CW);
-            setEngine(RIGHT_ENGINE, speed/2, CW);
+            setEngine(LEFT_ENGINE, speed/2, CW);
+            setEngine(RIGHT_ENGINE, speed, CW);
             engineLEDOn(LEFT);
             break;
 

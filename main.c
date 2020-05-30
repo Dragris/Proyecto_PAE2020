@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <posicion.h>
 #include <stdio.h>
+#include <math.h>
 
 #include "main.h"
 #include "dyn/dyn_app_common.h"
@@ -14,8 +15,8 @@
 uint8_t estado = Ninguno, estado_anterior = Ninguno, finalizar = 0;
 uint32_t indice;
 bool activate = true, corner = false;
-int norm_speed = 500, maneuver_speed = 10, found_wall;
-int obstacle_dist = 8, min_obstacle_dist = 4; //Let's hope this is 9mm and 4mm
+int norm_speed = 100, maneuver_speed = 10, found_wall;
+int obstacle_dist = 7, min_obstacle_dist = 4; //8mm and 4mm
 enum wall thisWall = LEFT_W; //Default wall must be to robot's left
 
 /**
@@ -68,10 +69,106 @@ int main(void) {
         if (simulator_finished) {
             break;
         }
+        /**
+         * Revisamos que tengamos el bot activado.
+         * Si está desactivado se quedará quieto.
+         */
+        if(activate) {
+            //Fetching sensor reads
+            int sens_L = sensorRead(0X1A);
+            int sens_C = sensorRead(0X1B);
+            int sens_R = sensorRead(0X1C);
+
+            if(sens_L == 0 || sens_C == 0 || sens_R == 0){
+                continue;
+            }
 
 
+            /**
+             * En todas los "subestados" en los que se realiza un giro, después del giro damos orden de ir hacia adelante
+             * esto es porque el giro es sobre el centro del robot, no sobre la marcha.
+             */
+
+            if (found_wall == true) {
+                switch (thisWall) {
+                    case LEFT_W:
+                        if(sens_L > 40){
+                            //La pared a la izquierda ha desaparecido, giramos porque la tratamos de esquina
+                            turn(norm_speed, LEFT);
+                            /*while(sens_L > obstacle_dist){
+                                sens_L = sensorRead(0X1A);
+                            }*/
+                            endlessMove(norm_speed, FORWARD);
+                        }else if(sens_L >= obstacle_dist){
+                            //TODO REVISAR PARA QUE NO DEPENDA DE SENS_C POR SI TIENE UNA PARED DELANTE
+                            turn(maneuver_speed+20,LEFT);
+                            while (sens_C > obstacle_dist){
+                                sens_C = sensorRead(0x1B);
+                            }
+                            endlessMove(20, FORWARD);
+                            endlessDorifto(maneuver_speed, RIGHT);
+                            sens_C = sensorRead(0x1B);
+                            while(sens_C < 220){
+                                sens_C = sensorRead(0x1B);
+                            }
+                            endlessMove(norm_speed, FORWARD);
+                        } else if(sens_L <= min_obstacle_dist){
+                            turn(maneuver_speed+10, RIGHT);
+                            while(sens_C < obstacle_dist){
+                                sens_C = sensorRead(0X1B);
+                            }
+                            endlessMove(norm_speed,FORWARD);
+                        }
+                        sens_C = sensorRead(0x1B);
+                        if(sens_C <= obstacle_dist){
+                            //Tenemos una pared delante, giramos a la derecha en el sitio hasta ponernos en paralelo
+                            endlessDorifto(maneuver_speed, RIGHT);
+                            while(sens_C < obstacle_dist){
+                                sens_C = sensorRead(0X1B);
+                            }
+                            endlessMove(norm_speed, FORWARD);
+                        }
+                        break;
+
+                    case RIGHT_W:
+
+                        break;
+
+                }
+            } else if (found_wall == false) {
+                //Si se activa cualquiera de estos if es porque hemos encontrado una pared así que pasaremos al modo "pared"
+                if (sens_L <= min_obstacle_dist) {
+                    endlessDorifto(maneuver_speed, RIGHT); //Nos ponemos en paralelo con la pared
+                    while (sens_C < 200) {
+                        sens_C = sensorRead(0X1B);
+                    }
+                    endlessMove(norm_speed, FORWARD);
+                    found_wall = true;
+                } else if (sens_C <= obstacle_dist-2) { //Si nos encontramos una pared de frente priorizamos dejarla a la izquierda del robot
+                    endlessDorifto(maneuver_speed, RIGHT);
+                    while (sens_C < 200) {
+                        sens_C = sensorRead(0X1B);
+                    }
+                    endlessMove(norm_speed, FORWARD);
+                    found_wall = true;
+                } else if (sens_R <= min_obstacle_dist) { //Si nos encontramos la pared por la derecha cambiamos la pared a la derecha
+                    endlessDorifto(maneuver_speed, RIGHT); //Nos ponemos en paralelo con la pared
+                    while (sens_C < obstacle_dist) {
+                        sens_C = sensorRead(0X1B);
+                    }
+                    endlessMove(norm_speed, FORWARD);
+                    found_wall = true;
+                } else {
+                    endlessMove(norm_speed, FORWARD);
+                }
+            } else {
+                stopEngines();
+                //TODO PRINT ERROR AND STOP
+            }
+        }
 
 
+/*
         Get_estado(&estado, &estado_anterior);
         if (estado != estado_anterior) {
             Set_estado_anterior(estado);
@@ -131,7 +228,7 @@ int main(void) {
                     //etc, etc...
             }
             fflush(stdout);
-        }
+        }*/
     }
     //Signal the emulation thread to stop
     pthread_kill(tid, SIGTERM);
