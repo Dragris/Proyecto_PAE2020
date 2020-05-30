@@ -27,7 +27,6 @@ int readObsDetDistance(byte position){
  */
 int sensorRead(byte sensor){
 	uint8_t distance;
-
 	dyn_read_byte(SENSOR_ID, sensor, &distance);
 	return distance;
 }

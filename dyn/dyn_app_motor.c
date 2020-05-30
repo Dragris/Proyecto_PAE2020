@@ -193,6 +193,36 @@ void endlessDorifto(int speed, enum dir direction){
 }
 
 /**
+ * Only use with even speeds
+ * @param speed
+ * @param direction
+ */
+void turn(int speed, enum dir direction){
+    engineLEDOff();
+    stopEngines();
+
+    switch(direction){
+        case RIGHT:
+            setEngine(LEFT_ENGINE, speed, CW);
+            setEngine(RIGHT_ENGINE, speed/2, CW);
+            engineLEDOn(RIGHT);
+            break;
+
+        case LEFT:
+            setEngine(LEFT_ENGINE, speed, CW);
+            setEngine(RIGHT_ENGINE, speed/2, CW);
+            engineLEDOn(LEFT);
+            break;
+
+        default:
+            printf("\nCHECK GIVEN DIRECTION!!\n");
+            //Paramos el robot por motivos de seguridad
+            stopEngines();
+            break;
+    }
+}
+
+/**
  * Funcion auxiliar para leer la velocidad de los motores.
  * Da la velocidad por pantalla, para testear con assserts usar readRegister.
  */

@@ -73,6 +73,11 @@ sensor_distance(uint16_t x0, uint16_t y0, float theta, const uint32_t *world, ui
     uint16_t indice = 0; //Distancia al obstaculo
     uint8_t u8_mod;
 
+    if (theta < -M_PI) {
+        theta += 2 * M_PI;
+    } else if (theta > M_PI) {
+        theta -= 2 * M_PI;
+    }
     dx = cos(theta);
     dy = sin(theta);
 #if DEBUG_LEVEL > 3
@@ -111,8 +116,8 @@ void distance(_robot_pos_t *robot_pos, uint8_t *izq, uint8_t *centro, uint8_t *d
     x0 = robot_pos->x; //posicion del bloque de sensores = Posicion del robot
     y0 = robot_pos->y; //posicion del bloque de sensores = Posicion del robot
     theta = robot_pos->theta; //orientacion del sensor central, paralela a la del robot
-    theta_l = theta - M_PI / 2;
-    theta_r = theta + M_PI / 2;
+    theta_r = theta - M_PI / 2;
+    theta_l = theta + M_PI / 2;
 
     //Sensor central:
     sensor_distance(x0, y0, theta, robot_pos->world, centro, 1);

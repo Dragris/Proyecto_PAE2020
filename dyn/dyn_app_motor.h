@@ -29,5 +29,6 @@ void endlessDorifto(int speed, enum dir direction);
 int readRegister(int id_module, int reg_addr, uint8_t* ret_val);
 void readSpeed(void);
 void turnAmount(int degree, enum dir direction);
+void turn(int speed, enum dir direction);
 
 #endif /* DYNAMIXELLIB_H_ */

@@ -83,7 +83,7 @@ static uint8_t recv_byte() {
     while (ret != QUEUE_OK) {
         ret = queue_pop(&tmp_byte, &q_tx);
     }
-    printf("0x%02X ", tmp_byte);
+    //printf("0x%02X ", tmp_byte);
 	UCA2IFG |= UCTXIFG; //Subo el flag "buffer TX libre"
 	UCA2STATW &= ~UCBUSY; //Bajo el flag "linea ocupada"
 
@@ -103,7 +103,7 @@ static void tx_byte(uint8_t data) {
     while (ret != QUEUE_OK) {
         ret = queue_push(data, &q_rx);
     }
-    printf("0x%02X ", data);
+    //printf("0x%02X ", data);
 	UCA2IFG |= UCTXIFG; //Subo el flag "buffer TX libre"
 	UCA2STATW &= ~UCBUSY; //Bajo el flag "linea ocupada"
 }
@@ -264,7 +264,7 @@ void *dyn_emu(void *vargp) {
                 is_rx_state = false;
                 break;
             case FSM_TX__HEADER_1:
-                printf("\n Sending reply\n");
+                //printf("\n Sending reply\n");
             case FSM_TX__HEADER_2:
             case FSM_TX__ID:
             case FSM_TX__LEN:

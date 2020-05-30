@@ -19,11 +19,11 @@ volatile uint16_t UCA2IFG = UCTXIFG;
 volatile uint16_t UCA2STATW = 0;
 
 void Sentit_Dades_Rx_emu(void) {
-    printf("Changed direction to RX\n");
+    //printf("Changed direction to RX\n");
 }
 
 void Sentit_Dades_Tx_emu(void) {
-    printf("Changed direction to TX\n");
+    //printf("Changed direction to TX\n");
 }
 
 void TxUAC2_emu(byte bTxdData) {
