@@ -10,8 +10,8 @@
 #include "dyn_frames.h"
 
 #ifndef __MSP432P401R__
-#include "../../../Desktop/PAE/P4_AlbertoBarragan_DavidLopez/hal_dyn_uart/hal_dyn_uart_emu.h"
-#include "../../../Desktop/PAE/P4_AlbertoBarragan_DavidLopez/dyn_test/fake_msp.h"
+#include "../hal_dyn_uart/hal_dyn_uart_emu.h"
+#include "../hal_dyn_uart/fake_msp.h"
 #include <stdio.h>
 
 #define f_TxUAC2 TxUAC2_emu

@@ -15,8 +15,8 @@ CMakeFiles/p4_pc_joystick2_habitacion.dir/dyn/dyn_app_sensor.c.obj: ../dyn/dyn_i
 CMakeFiles/p4_pc_joystick2_habitacion.dir/dyn/dyn_frames.c.obj: ../dyn/dyn_frames.h
 CMakeFiles/p4_pc_joystick2_habitacion.dir/dyn/dyn_frames.c.obj: ../dyn/dyn_frames.c
 CMakeFiles/p4_pc_joystick2_habitacion.dir/dyn/dyn_frames.c.obj: ../dyn/dyn_frames.h
-CMakeFiles/p4_pc_joystick2_habitacion.dir/dyn/dyn_frames.c.obj: C:/Users/dragr/Desktop/PAE/P4_AlbertoBarragan_DavidLopez/dyn_test/fake_msp.h
-CMakeFiles/p4_pc_joystick2_habitacion.dir/dyn/dyn_frames.c.obj: C:/Users/dragr/Desktop/PAE/P4_AlbertoBarragan_DavidLopez/hal_dyn_uart/hal_dyn_uart_emu.h
+CMakeFiles/p4_pc_joystick2_habitacion.dir/dyn/dyn_frames.c.obj: ../hal_dyn_uart/fake_msp.h
+CMakeFiles/p4_pc_joystick2_habitacion.dir/dyn/dyn_frames.c.obj: ../hal_dyn_uart/hal_dyn_uart_emu.h
 
 CMakeFiles/p4_pc_joystick2_habitacion.dir/dyn/dyn_instr.c.obj: ../dyn/dyn_frames.h
 CMakeFiles/p4_pc_joystick2_habitacion.dir/dyn/dyn_instr.c.obj: ../dyn/dyn_instr.c

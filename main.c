@@ -95,23 +95,25 @@ int main(void) {
                         if(sens_L > 40){
                             //La pared a la izquierda ha desaparecido, giramos porque la tratamos de esquina
                             turn(norm_speed, LEFT);
-                            /*while(sens_L > obstacle_dist){
-                                sens_L = sensorRead(0X1A);
-                            }*/
                             endlessMove(norm_speed, FORWARD);
                         }else if(sens_L >= obstacle_dist){
                             //TODO REVISAR PARA QUE NO DEPENDA DE SENS_C POR SI TIENE UNA PARED DELANTE
+                            int aux_dist;
+                            aux_dist = sens_C < 220 ? obstacle_dist : 220;
                             turn(maneuver_speed+20,LEFT);
-                            while (sens_C > obstacle_dist){
+                            while (sens_C > obstacle_dist || sens_L <= min_obstacle_dist){
                                 sens_C = sensorRead(0x1B);
+                                sens_L = sensorRead(0x1A);
                             }
-                            endlessMove(20, FORWARD);
+                            //endlessMove(20, FORWARD);
                             endlessDorifto(maneuver_speed, RIGHT);
                             sens_C = sensorRead(0x1B);
-                            while(sens_C < 220){
+
+                            while(sens_C < aux_dist){
                                 sens_C = sensorRead(0x1B);
                             }
                             endlessMove(norm_speed, FORWARD);
+
                         } else if(sens_L <= min_obstacle_dist){
                             turn(maneuver_speed+10, RIGHT);
                             while(sens_C < obstacle_dist){
@@ -119,6 +121,7 @@ int main(void) {
                             }
                             endlessMove(norm_speed,FORWARD);
                         }
+
                         sens_C = sensorRead(0x1B);
                         if(sens_C <= obstacle_dist){
                             //Tenemos una pared delante, giramos a la derecha en el sitio hasta ponernos en paralelo
