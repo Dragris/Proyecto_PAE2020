@@ -28,7 +28,7 @@ static _robot_pos_t robot_pos_str;
 #define L_AXIS ((float) 1)
 #define DELTA_T ((float) SIM_STEP_MS_TIME/1000)
 
-//114 rpm -> 12 rad/s, r = 2cm -> v_lin_max ~ 240 mm/s
+//114 rpm -> 12 rad/s, r = 2cm -> v_lin_max ~ 240 mm
 //#define CNTS_2_MM (240/5/1023)
 #define CNTS_2_MM ((float) 1.0/(DELTA_T*1023))
 
@@ -163,6 +163,7 @@ void init_movement_simulator(const uint32_t *world) {
     simulator_finished = false;
 
     t_last_upd = clock();
+    update_sensor_data();
 
 #if DEBUG_LEVEL > 2
     fichero = fopen(OUTPUT_FILE, "w+"); //creacion del fichero de salida, en escritura

@@ -60,7 +60,6 @@ int main(void) {
     wheelUnlock(LEFT_ENGINE);
     wheelUnlock(RIGHT_ENGINE);
     stopEngines();
-    found_wall = 0;
 
 
 
@@ -78,10 +77,6 @@ int main(void) {
             int sens_L = sensorRead(0X1A);
             int sens_C = sensorRead(0X1B);
             int sens_R = sensorRead(0X1C);
-
-            if(sens_L == 0 || sens_C == 0 || sens_R == 0){
-                continue;
-            }
 
 
             /**
@@ -140,6 +135,14 @@ int main(void) {
                 }
             } else if (found_wall == false) {
                 //Si se activa cualquiera de estos if es porque hemos encontrado una pared así que pasaremos al modo "pared"
+                if (sens_C < sens_L && sens_C < sens_R){
+                   //Do nothing (será el else en la comparación de mínimos)
+                } else if (sens_L < sens_C && sens_L < sens_R){
+                    endlessDorifto(maneuver_speed, LEFT);
+                } else if (sens_R < sens_C && sens_R < sens_L) {
+                    endlessDorifto(maneuver_speed, RIGHT);
+                }
+
                 if (sens_L <= min_obstacle_dist) {
                     endlessDorifto(maneuver_speed, RIGHT); //Nos ponemos en paralelo con la pared
                     while (sens_C < 200) {
