@@ -14,10 +14,11 @@
 
 uint8_t estado = Ninguno, estado_anterior = Ninguno, finalizar = 0;
 uint32_t indice;
-bool activate = true, corner = false;
-int norm_speed = 100, maneuver_speed = 10, found_wall;
+bool activate = true;
+int norm_speed = 60, maneuver_speed = 10, found_wall;
 int obstacle_dist = 7, min_obstacle_dist = 4; //8mm and 4mm
 enum wall thisWall = LEFT_W; //Default wall must be to robot's left
+enum state newState = NONE, oldState = NONE;
 
 /**
  * main.c
@@ -87,129 +88,76 @@ int main(void) {
             if (found_wall == true) {
                 switch (thisWall) {
                     case LEFT_W:
-                        if(sens_L > 40){
-                            //La pared a la izquierda ha desaparecido, giramos porque la tratamos de esquina
-                            turn(norm_speed, LEFT);
-                            endlessMove(norm_speed, FORWARD);
-                        }else if(sens_L >= obstacle_dist){
-                            //TODO REVISAR PARA QUE NO DEPENDA DE SENS_C POR SI TIENE UNA PARED DELANTE
-                            int aux_dist;
-                            aux_dist = sens_C < 220 ? obstacle_dist : 220;
-                            turn(maneuver_speed+20,LEFT);
-                            while (sens_C > obstacle_dist || sens_L <= min_obstacle_dist){
-                                sens_C = sensorRead(0x1B);
-                                sens_L = sensorRead(0x1A);
-                            }
-                            //endlessMove(20, FORWARD);
-                            endlessDorifto(maneuver_speed, RIGHT);
-                            sens_C = sensorRead(0x1B);
-
-                            while(sens_C < aux_dist){
-                                sens_C = sensorRead(0x1B);
-                            }
-                            endlessMove(norm_speed, FORWARD);
-
+                         if(sens_L > 40){
+                            newState = W_FAR_LEFT;
+                            cambiaEstado(sens_C, sens_L, sens_R);
+                        }  else if(sens_L >= obstacle_dist){
+                            newState = W_MIN_LEFT;
+                            cambiaEstado(sens_C, sens_L, sens_R);
                         } else if(sens_L <= min_obstacle_dist){
-                            turn(maneuver_speed+10, RIGHT);
-                            while(sens_C < obstacle_dist){
-                                sens_C = sensorRead(0X1B);
-                            }
-                            endlessMove(norm_speed,FORWARD);
+                            newState = W_MAX_LEFT;
+                            cambiaEstado(sens_C, sens_L, sens_R);
                         }
 
                         sens_C = sensorRead(0x1B);
                         if(sens_C <= obstacle_dist){
-                            //Tenemos una pared delante, giramos a la derecha en el sitio hasta ponernos en paralelo
-                            endlessDorifto(maneuver_speed, RIGHT);
-                            while(sens_C < obstacle_dist){
-                                sens_C = sensorRead(0X1B);
-                            }
-                            endlessMove(norm_speed, FORWARD);
+                            newState = W_FRONT_LEFT;
+                            cambiaEstado(sens_C, sens_L, sens_R);
                         }
                         break;
 
                     case RIGHT_W:
                         if(sens_R > 40){
-                            //La pared a la derecha ha desaparecido, giramos porque la tratamos de esquina
-                            turn(norm_speed, RIGHT);
-                            endlessMove(norm_speed, FORWARD);
+                            newState = W_FAR_RIGHT;
+                            cambiaEstado(sens_C, sens_L, sens_R);
                         }else if(sens_R >= obstacle_dist){
-                            //TODO REVISAR PARA QUE NO DEPENDA DE SENS_C POR SI TIENE UNA PARED DELANTE
-                            int aux_dist;
-                            aux_dist = sens_C < 220 ? obstacle_dist : 220;
-                            turn(maneuver_speed+20,RIGHT);
-                            while (sens_C > obstacle_dist || sens_R <= min_obstacle_dist){
-                                sens_C = sensorRead(0x1B);
-                                sens_R = sensorRead(0x1C);
-                            }
-                            //endlessMove(20, FORWARD);
-                            endlessDorifto(maneuver_speed, RIGHT);
-                            sens_C = sensorRead(0x1B);
-
-                            while(sens_C < aux_dist){
-                                sens_C = sensorRead(0x1B);
-                            }
-                            endlessMove(norm_speed, FORWARD);
-
+                            newState = W_MIN_RIGHT;
+                            cambiaEstado(sens_C, sens_L, sens_R);
                         } else if(sens_R <= min_obstacle_dist){
-                            turn(maneuver_speed+10, LEFT);
-                            while(sens_C < obstacle_dist){
-                                sens_C = sensorRead(0X1B);
-                            }
-                            endlessMove(norm_speed,FORWARD);
+                            newState = W_MAX_RIGHT;
+                            cambiaEstado(sens_C, sens_L, sens_R);
                         }
 
-                        sens_C = sensorRead(0x1B);
-                        if(sens_C <= obstacle_dist){
-                            //Tenemos una pared delante, giramos a la izquierda en el sitio hasta ponernos en paralelo
-                            endlessDorifto(maneuver_speed, LEFT);
-                            while(sens_C < obstacle_dist){
-                                sens_C = sensorRead(0X1B);
-                            }
-                            endlessMove(norm_speed, FORWARD);
+                        //sens_C = sensorRead(0x1B);
+                        else if(sens_C <= obstacle_dist){
+                            newState = W_FRONT_RIGHT;
+                            cambiaEstado(sens_C, sens_L, sens_R);
                         }
                         break;
 
                 }
             } else if (found_wall == false) {
                 //Si se activa cualquiera de estos if es porque hemos encontrado una pared así que pasaremos al modo "pared"
-                if (sens_C < sens_L && sens_C < sens_R){
+                if (sens_L <= min_obstacle_dist) {
+                    newState = NW_CLOSE_LEFT;
+                    cambiaEstado(sens_C, sens_L, sens_R);
+                    thisWall = true;
+                } else if (sens_C <= obstacle_dist-2) { //Si nos encontramos una pared de frente priorizamos dejarla a la izquierda del robot
+                    newState = NW_CLOSE_FRONT;
+                    cambiaEstado(sens_C, sens_L, sens_R);
+                    thisWall = true;
+                } else if (sens_R <= min_obstacle_dist) { //Si nos encontramos la pared por la derecha cambiamos la pared a la derecha
+                    newState = NW_CLOSE_RIGHT;
+                    cambiaEstado(sens_C, sens_L, sens_R);
+                    thisWall = true;
+                } else if (sens_C < sens_L && sens_C < sens_R){
                    //Do nothing (será el else en la comparación de mínimos)
                 } else if (sens_L < sens_C && sens_L < sens_R){
-                    endlessDorifto(maneuver_speed, LEFT);
+                    newState = NW_FAR_LEFT;
+                    cambiaEstado(sens_C, sens_L, sens_R);
                 } else if (sens_R < sens_C && sens_R < sens_L) {
-                    endlessDorifto(maneuver_speed, RIGHT);
-                }
-
-                if (sens_L <= min_obstacle_dist) {
-                    endlessDorifto(maneuver_speed, RIGHT); //Nos ponemos en paralelo con la pared
-                    while (sens_C < 200) {
-                        sens_C = sensorRead(0X1B);
-                    }
-                    endlessMove(norm_speed, FORWARD);
-                    found_wall = true;
-                } else if (sens_C <= obstacle_dist-2) { //Si nos encontramos una pared de frente priorizamos dejarla a la izquierda del robot
-                    endlessDorifto(maneuver_speed, RIGHT);
-                    while (sens_C < 200) {
-                        sens_C = sensorRead(0X1B);
-                    }
-                    endlessMove(norm_speed, FORWARD);
-                    found_wall = true;
-                } else if (sens_R <= min_obstacle_dist) { //Si nos encontramos la pared por la derecha cambiamos la pared a la derecha
-                    endlessDorifto(maneuver_speed, LEFT); //Nos ponemos en paralelo con la pared
-                    while (sens_C < obstacle_dist) {
-                        sens_C = sensorRead(0X1B);
-                    }
-                    endlessMove(norm_speed, FORWARD);
-                    thisWall = RIGHT_W;
-                    found_wall = true;
+                    newState = NW_FAR_RIGHT;
+                    cambiaEstado(sens_C, sens_L, sens_R);
                 } else {
-                    endlessMove(norm_speed, FORWARD);
+                    newState = NW_FAR_FRONT;
+                    cambiaEstado(sens_C, sens_L, sens_R);
                 }
             } else {
                 stopEngines();
+                break;
                 //TODO PRINT ERROR AND STOP
             }
+
         }
 
         
@@ -273,10 +221,145 @@ int main(void) {
             }
             fflush(stdout);
         }
+
+
     }
     //Signal the emulation thread to stop
     pthread_kill(tid, SIGTERM);
     pthread_kill(jid, SIGTERM);
     printf("Programa terminado\n");
     fflush(stdout);
+}
+
+
+void cambiaEstado(int sens_C, int sens_L, int sens_R){
+    if (newState == oldState) return;
+
+    int aux_dist;
+    oldState = newState;
+    switch (newState) {
+        case NW_FAR_LEFT:
+            endlessDorifto(maneuver_speed, LEFT);
+            break;
+
+        case NW_FAR_RIGHT:
+            endlessDorifto(maneuver_speed, RIGHT);
+            break;
+
+        case NW_CLOSE_LEFT:
+            endlessDorifto(maneuver_speed, RIGHT); //Nos ponemos en paralelo con la pared
+            while (sens_C < 200) {
+                sens_C = sensorRead(0X1B);
+            }
+            endlessMove(norm_speed, FORWARD);
+            found_wall = true;
+            break;
+
+        case NW_CLOSE_FRONT:
+            endlessDorifto(maneuver_speed, RIGHT);
+            while (sens_C < 200) {
+                sens_C = sensorRead(0X1B);
+            }
+            endlessMove(norm_speed, FORWARD);
+            found_wall = true;
+            break;
+
+        case NW_CLOSE_RIGHT:
+            endlessDorifto(maneuver_speed, LEFT); //Nos ponemos en paralelo con la pared
+            while (sens_C < obstacle_dist) {
+                sens_C = sensorRead(0X1B);
+            }
+            endlessMove(norm_speed, FORWARD);
+            thisWall = RIGHT_W;
+            found_wall = true;
+            break;
+
+        case NW_FAR_FRONT:
+            endlessMove(norm_speed, FORWARD);
+            break;
+
+        case W_FAR_LEFT:
+            //La pared a la izquierda ha desaparecido, giramos porque la tratamos de esquina
+            turn(norm_speed, LEFT);
+            endlessMove(norm_speed, FORWARD);
+            break;
+
+        case W_MIN_LEFT:
+            //TODO REVISAR PARA QUE NO DEPENDA DE SENS_C POR SI TIENE UNA PARED DELANTE
+            aux_dist = sens_C < 220 ? obstacle_dist : 220;
+            turn(maneuver_speed+20,LEFT);
+            while (sens_C > obstacle_dist || sens_L <= min_obstacle_dist){
+                sens_C = sensorRead(0x1B);
+                sens_L = sensorRead(0x1A);
+            }
+            //endlessMove(20, FORWARD);
+            endlessDorifto(maneuver_speed, RIGHT);
+            sens_C = sensorRead(0x1B);
+
+            while(sens_C < aux_dist){
+                sens_C = sensorRead(0x1B);
+            }
+            endlessMove(norm_speed, FORWARD);
+            endlessDorifto(maneuver_speed, LEFT);
+            break;
+
+        case W_MAX_LEFT:
+            turn(maneuver_speed+10, RIGHT);
+            while(sens_C < obstacle_dist){
+                sens_C = sensorRead(0X1B);
+            }
+            endlessMove(norm_speed,FORWARD);
+            break;
+
+        case W_FRONT_LEFT:
+            //Tenemos una pared delante, giramos a la derecha en el sitio hasta ponernos en paralelo
+            endlessDorifto(maneuver_speed, RIGHT);
+            while(sens_C < obstacle_dist){
+                sens_C = sensorRead(0X1B);
+            }
+            endlessMove(norm_speed, FORWARD);
+            break;
+
+        case W_FAR_RIGHT:
+            //La pared a la derecha ha desaparecido, giramos porque la tratamos de esquina
+            turn(norm_speed, RIGHT);
+            endlessMove(norm_speed, FORWARD);
+            break;
+
+        case W_MIN_RIGHT:
+            //TODO REVISAR PARA QUE NO DEPENDA DE SENS_C POR SI TIENE UNA PARED DELANTE
+            aux_dist = sens_C < 220 ? obstacle_dist : 220;
+            turn(maneuver_speed+20,RIGHT);
+            while (sens_C > obstacle_dist || sens_R <= min_obstacle_dist){
+                sens_C = sensorRead(0x1B);
+                sens_R = sensorRead(0x1C);
+            }
+            //endlessMove(20, FORWARD);
+            endlessDorifto(maneuver_speed, RIGHT);
+            sens_C = sensorRead(0x1B);
+
+            while(sens_C < aux_dist){
+                sens_C = sensorRead(0x1B);
+            }
+            endlessMove(norm_speed, FORWARD);
+            break;
+
+        case W_MAX_RIGHT:
+            turn(maneuver_speed+10, LEFT);
+            while(sens_C < obstacle_dist){
+                sens_C = sensorRead(0X1B);
+            }
+            endlessMove(norm_speed,FORWARD);
+            break;
+
+        case W_FRONT_RIGHT:
+            //Tenemos una pared delante, giramos a la izquierda en el sitio hasta ponernos en paralelo
+            endlessDorifto(maneuver_speed, LEFT);
+            while(sens_C < obstacle_dist){
+                sens_C = sensorRead(0X1B);
+            }
+            endlessMove(norm_speed, FORWARD);
+            break;
+    }
+
 }
