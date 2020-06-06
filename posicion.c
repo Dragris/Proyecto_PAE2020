@@ -54,7 +54,6 @@ void coordenadas(uint16_t x, uint16_t y, uint32_t *p_offset, uint8_t *p_bit) {
 
 /*
  * Funcion para determinar si un punto concreto (x,y) pertenece on no a un obstaculo o a una pared
- *
  */
 uint8_t obstaculo(uint16_t x, uint16_t y, const uint32_t *mundo) {
     uint32_t offset = 0;
@@ -65,8 +64,7 @@ uint8_t obstaculo(uint16_t x, uint16_t y, const uint32_t *mundo) {
     return false;
 }
 
-void
-sensor_distance(uint16_t x0, uint16_t y0, float theta, const uint32_t *world, uint8_t *sensor_data, uint8_t dbg_msg) {
+void sensor_distance(uint16_t x0, uint16_t y0, float theta, const uint32_t *world, uint8_t *sensor_data, uint8_t dbg_msg) {
     float dx, dy; //incrementos del vector de desplazamiento en la direccion de un sensor
     float modulo = 0.0; //modulo del vector de desplazamiento en la direccion de un sensor
     float x = 0.0, y = 0.0; //componentes del vector de desplazamiento en la direccion de un sensor

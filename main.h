@@ -13,6 +13,27 @@ enum wall{
     LEFT_W,
     RIGHT_W
 };
+/**
+ * NW = No Wall
+ * W = Wall
+ */
+enum state{
+    NONE,
+    NW_FAR_LEFT,
+    NW_FAR_RIGHT,
+    NW_FAR_FRONT,
+    NW_CLOSE_LEFT,
+    NW_CLOSE_FRONT,
+    NW_CLOSE_RIGHT,
+    W_FAR_LEFT,
+    W_MIN_LEFT,
+    W_MAX_LEFT,
+    W_FRONT_LEFT,
+    W_FAR_RIGHT,
+    W_MIN_RIGHT,
+    W_MAX_RIGHT,
+    W_FRONT_RIGHT
+};
 
 #ifndef MAIN_H_
 #define MAIN_H_

@@ -153,8 +153,8 @@ void update_sensor_data() {
  */
 void init_movement_simulator(const uint32_t *world) {
     //TODO: If required, change to appropriate initial conditions!!
-    robot_pos_str.x = 50; //Start 50
-    robot_pos_str.y = 750; //Start 250
+    robot_pos_str.x = 300; //Start 50
+    robot_pos_str.y = 800; //Start 250
     robot_pos_str.x_p = (float) robot_pos_str.x;
     robot_pos_str.y_p = (float) robot_pos_str.y;
     robot_pos_str.theta = M_PI_2; //Start M_PI_2
