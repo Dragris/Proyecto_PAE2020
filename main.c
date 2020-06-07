@@ -81,6 +81,8 @@ int main(void) {
             int sens_R = sensorRead(0X1C);
 
             /**
+             * W
+             *
              * Miramos si ya hemos encontrado una pared.
              */
             if (found_wall == true) {
@@ -91,6 +93,7 @@ int main(void) {
                     case LEFT_W:
                         /**
                          * W_FAR_LEFT
+                         *
                          * En este estado la pared se ha alejado demasiado de la pared.
                          * Como es más de lo que se podría alejar el robot significa que hemos pasado por una esquina.
                          * Para corregir nuestro rumbo giramos hacia la izquierda mientras seguimos moviéndonos hacia
@@ -101,6 +104,7 @@ int main(void) {
                         }
                         /**
                          * W_MAX_LEFT
+                         *
                          * En este estado nos hemos alejado un poco de la pared, superando el límite máximo establecido.
                          * Para corregirlo hemos pensado en aplicar una solución que, en la mayoría de casos, nos permita
                          * ponernos bastante en paralelo para que el robot no haga zig-zag en exceso.
@@ -237,7 +241,11 @@ int main(void) {
 
                 }
             }
-
+            /**
+             * NW
+             *
+             * Si no tenemos pared.
+             */
             else if (found_wall == false) {
                 /*
                  * En este primer bloque miramos qué pared tenemos más cerca.
@@ -271,7 +279,7 @@ int main(void) {
                  * una pared. Nos es necesario indicar que la pared es la izquierda porque es la pared que seguimos
                  * por default.
                  */
-                if (sens_L <= min_obstacle_dist) {
+                if (sens_L <= obstacle_dist) {
                     endlessDorifto(maneuver_speed, RIGHT); //Nos ponemos en paralelo con la pared
                     while (sens_C < 200) {
                         sens_C = sensorRead(0X1B);
@@ -306,7 +314,7 @@ int main(void) {
                  * se ponga más o menos en paralelo y nos moveremos hacia adelante. Tras esto marcamos que nos hemos
                  * encontrado una pared y que es la derecha.
                  */
-                else if (sens_R <= min_obstacle_dist) {
+                else if (sens_R <= obstacle_dist) {
                     //Si nos encontramos la pared por la derecha cambiamos la pared a la derecha
                     endlessDorifto(maneuver_speed, LEFT); //Nos ponemos en paralelo con la pared
                     while (sens_C < obstacle_dist) {
