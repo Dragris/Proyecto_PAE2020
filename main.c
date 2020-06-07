@@ -239,6 +239,12 @@ int main(void) {
                         endlessMove(norm_speed, FORWARD);
                         break;
 
+                    default:
+                        stopEngines();
+                        //TODO PRINT ERROR AND STOP
+                        printf("Error: Something went wrong");
+                        exit(1);
+
                 }
             }
             /**
@@ -296,6 +302,10 @@ int main(void) {
                  * derecha hasta que no detecte una pared cercana el sensor central. Esto dejará al robot en una ruta
                  * más o menos paralela a la pared. Tras esto el robot se desplazará hacia adelante y marcaremos que hemos
                  * encontrado una pared.
+                 *
+                 * Hemos distinguido entre este caso y el anterior porque, pese a hacer lo mismo, en un principio iban
+                 * a tener diferentes comportamientos, pero luego nos dimos cuenta de que no era necesario y no los
+                 * llegamos a unir.
                  */
                 else if (sens_C <= obstacle_dist-2) { //
                     //Si nos encontramos una pared de frente priorizamos dejarla a la izquierda del robot
