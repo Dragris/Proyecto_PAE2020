@@ -131,11 +131,9 @@ int main(void) {
                                 sens_L = sensorRead(0x1A);
                             }
                             endlessDorifto(maneuver_speed, RIGHT);
-                            sens_C = sensorRead(0x1B);
-                            while(sens_C < aux_dist){
+                            do{
                                 sens_C = sensorRead(0x1B);
-                            }
-                            endlessMove(norm_speed, FORWARD);
+                            }while(sens_C < aux_dist);
                         }
                         /**
                          * W_MIN_LEFT
@@ -201,14 +199,10 @@ int main(void) {
                                 sens_C = sensorRead(0x1B);
                                 sens_R = sensorRead(0x1C);
                             }
-                            endlessDorifto(maneuver_speed, RIGHT);
-                            sens_C = sensorRead(0x1B);
-
-                            while(sens_C < aux_dist){
+                            endlessDorifto(maneuver_speed, LEFT);
+                            do{
                                 sens_C = sensorRead(0x1B);
-                            }
-                            endlessMove(norm_speed, FORWARD);
-
+                            }while(sens_C < aux_dist);
                         }
                         /**
                          * W_MIN_RIGHT
