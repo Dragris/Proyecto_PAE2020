@@ -3,23 +3,18 @@
 #include <assert.h>
 #include <posicion.h>
 #include <stdio.h>
-#include <math.h>
 
 #include "main.h"
 #include "dyn/dyn_app_common.h"
-#include "dyn_test/dyn_emu.h"
 #include "dyn_test/b_queue.h"
 #include "joystick_emu/joystick.h"
 #include "habitacion_001.h"
 
-uint8_t estado = Ninguno, estado_anterior = Ninguno, finalizar = 0;
-uint32_t indice;
-bool activate = true, corner = false;
-int norm_speed = 100, maneuver_speed = 10, found_wall;
-int obstacle_dist = 7, min_obstacle_dist = 4; //8mm and 4mm
+uint8_t estado = Ninguno, estado_anterior = Ninguno;
+bool activate = true;
+int norm_speed = 200, maneuver_speed = 10, found_wall;
+int obstacle_dist = 7, min_obstacle_dist = 4; //7mm and 4mm
 enum wall thisWall = LEFT_W; //Default wall must be to robot's left
-enum state newState = NONE;
-enum state oldState = NONE;
 
 /**
  * main.c
@@ -164,7 +159,6 @@ int main(void) {
                          * sí mismo hasta que deje de detectarlo.
                          */
                         if(sens_C <= obstacle_dist){
-                            //Tenemos una pared delante, giramos a la derecha en el sitio hasta ponernos en paralelo
                             endlessDorifto(maneuver_speed, RIGHT);
                             while(sens_C < obstacle_dist){
                                 sens_C = sensorRead(0X1B);
@@ -182,8 +176,7 @@ int main(void) {
                          *
                          * Esta función es un mirror de W_FAR_LEFT. Ha sido adaptado para seguir la pared derecha.
                          */
-                        if(sens_R > 40){ //
-                            //La pared a la derecha ha desaparecido, giramos porque la tratamos de esquina
+                        if(sens_R > 40){
                             turn(norm_speed, RIGHT);
                         }
                         /**
@@ -222,8 +215,7 @@ int main(void) {
                          *
                          * Esta función es un mirror de W_FRONT_LEFT. Ha sido adaptado para seguir la pared derecha.
                          */
-                        if(sens_C <= obstacle_dist && newState){
-                            //Tenemos una pared delante, giramos a la izquierda en el sitio hasta ponernos en paralelo
+                        if(sens_C <= obstacle_dist){
                             endlessDorifto(maneuver_speed, LEFT);
                             while(sens_C < obstacle_dist){
                                 sens_C = sensorRead(0X1B);
@@ -238,7 +230,6 @@ int main(void) {
                         //TODO PRINT ERROR AND STOP
                         printf("Error: Something went wrong");
                         exit(1);
-
                 }
             }
             /**
@@ -247,10 +238,6 @@ int main(void) {
              * Si no tenemos pared.
              */
             else if (found_wall == false) {
-                /*
-                 * En este primer bloque miramos qué pared tenemos más cerca.
-                 */
-
                 /**
                  * NW_FAR_LEFT
                  *
@@ -280,7 +267,7 @@ int main(void) {
                  * por default.
                  */
                 if (sens_L <= obstacle_dist) {
-                    endlessDorifto(maneuver_speed, RIGHT); //Nos ponemos en paralelo con la pared
+                    endlessDorifto(maneuver_speed, RIGHT);
                     while (sens_C < 200) {
                         sens_C = sensorRead(0X1B);
                     }
@@ -301,8 +288,7 @@ int main(void) {
                  * a tener diferentes comportamientos, pero luego nos dimos cuenta de que no era necesario y no los
                  * llegamos a unir.
                  */
-                else if (sens_C <= obstacle_dist-2) { //
-                    //Si nos encontramos una pared de frente priorizamos dejarla a la izquierda del robot
+                else if (sens_C <= obstacle_dist-2) {
                     endlessDorifto(maneuver_speed, RIGHT);
                     while (sens_C < 200) {
                         sens_C = sensorRead(0X1B);
@@ -319,8 +305,7 @@ int main(void) {
                  * encontrado una pared y que es la derecha.
                  */
                 else if (sens_R <= obstacle_dist) {
-                    //Si nos encontramos la pared por la derecha cambiamos la pared a la derecha
-                    endlessDorifto(maneuver_speed, LEFT); //Nos ponemos en paralelo con la pared
+                    endlessDorifto(maneuver_speed, LEFT);
                     while (sens_C < obstacle_dist) {
                         sens_C = sensorRead(0X1B);
                     }
@@ -410,7 +395,6 @@ int main(void) {
                 case Quit:
                     printf("Adios!\n");
                     break;
-                    //etc, etc...
             }
             fflush(stdout);
         }
