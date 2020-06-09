@@ -71,7 +71,6 @@ CMakeFiles/p4_pc_joystick2_habitacion.dir/main.c.obj: ../dyn_test/movement_simul
 CMakeFiles/p4_pc_joystick2_habitacion.dir/main.c.obj: ../posicion.h
 CMakeFiles/p4_pc_joystick2_habitacion.dir/main.c.obj: ../dyn/dyn_app_common.h
 CMakeFiles/p4_pc_joystick2_habitacion.dir/main.c.obj: ../dyn_test/b_queue.h
-CMakeFiles/p4_pc_joystick2_habitacion.dir/main.c.obj: ../dyn_test/dyn_emu.h
 CMakeFiles/p4_pc_joystick2_habitacion.dir/main.c.obj: ../habitacion_001.h
 CMakeFiles/p4_pc_joystick2_habitacion.dir/main.c.obj: ../joystick_emu/joystick.h
 CMakeFiles/p4_pc_joystick2_habitacion.dir/main.c.obj: ../main.c

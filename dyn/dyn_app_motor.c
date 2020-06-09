@@ -162,7 +162,8 @@ void stopEngines(void){
 }
 
 /**
- * Función para girar el robot haciendo uso de un solo motor
+ * Función para girar el robot sobre sí mismo.
+ * Usamos los dos motores en diferentes direcciones para conseguirlo.
  * @param speed
  * @param direction  RIGHT || LEFT
  */
@@ -193,7 +194,8 @@ void endlessDorifto(int speed, enum dir direction){
 }
 
 /**
- * Only use with even speeds
+ * Función que usamos para girar mientras mantenemos un desplazamiento hacia adelante.
+ * Usamos un ratio 2:1 que no se puede cambiar para realizar estos giros.
  * @param speed
  * @param direction
  */
@@ -253,6 +255,16 @@ int readRegister(int id_module, int reg_addr, uint8_t* ret_val){
     return dyn_read_byte(id_module, reg_addr, ret_val);
 }
 
+/**
+ * Utilizaríamos esto en un robot real para girar una cantidad de grados que pasamos por parámetro.
+ * Al estar en la simulación no podemos usarlo.
+ *
+ * Según hemos buscado por internet para girar 1º con el motor dynamixel AX-12 podemos poner la velocidad a 150 en
+ * un motor y en el otro a 0 y esperando 28.5 ms * grados, podemos hacer que gire esa cantidad de grados específica.
+ *
+ * @param degree
+ * @param direction
+ */
 void turnAmount(int degree, enum dir direction){
     endlessDorifto(150, direction);
     //Esperamos X grados * 28.5
