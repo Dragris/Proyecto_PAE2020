@@ -95,7 +95,7 @@ int main(void) {
                          * adelante.
                          */
                         if(sens_L > 100) {
-                            turn(norm_speed, LEFT);
+                            turn(500, LEFT);
                         }
                         /**
                          * W_MAX_LEFT
@@ -119,7 +119,7 @@ int main(void) {
                          */
                         else if(sens_L >= obstacle_dist) {
                             int aux_dist;
-                            aux_dist = sens_C < 220 ? obstacle_dist : 220;
+                            aux_dist = sens_C < 220 ? 50 : 220;
                             turn(maneuver_speed+20,LEFT);
                             while (sens_C > obstacle_dist || sens_L <= min_obstacle_dist){
                                 sens_C = sensorRead(0x1B);
@@ -176,8 +176,8 @@ int main(void) {
                          *
                          * Esta función es un mirror de W_FAR_LEFT. Ha sido adaptado para seguir la pared derecha.
                          */
-                        if(sens_R > 40){
-                            turn(norm_speed, RIGHT);
+                        if(sens_R > 100){
+                            turn(500, RIGHT);
                         }
                         /**
                          * W_MAX_RIGHT
@@ -186,7 +186,7 @@ int main(void) {
                          */
                         else if(sens_R >= obstacle_dist){
                             int aux_dist;
-                            aux_dist = sens_C < 220 ? obstacle_dist : 220;
+                            aux_dist = sens_C < 220 ? 50 : 220;
                             turn(maneuver_speed+20,RIGHT);
                             while (sens_C > obstacle_dist || sens_R <= min_obstacle_dist){
                                 sens_C = sensorRead(0x1B);
@@ -221,7 +221,6 @@ int main(void) {
                                 sens_C = sensorRead(0X1B);
                             }
                         }
-
                         endlessMove(norm_speed, FORWARD);
                         break;
 
