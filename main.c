@@ -94,7 +94,7 @@ int main(void) {
                          * Para corregir nuestro rumbo giramos hacia la izquierda mientras seguimos moviéndonos hacia
                          * adelante.
                          */
-                        if(sens_L > 40) {
+                        if(sens_L > 100) {
                             turn(norm_speed, LEFT);
                         }
                         /**
@@ -355,12 +355,10 @@ int main(void) {
                     printf("\n");
                     break;
                 case Up:
-                    //Activamos el bot
-                    activate = 1;
                     break;
                 case Down:
-                    //Desactivamos y paramos el bot
-                    activate = 0;
+                    //Cambiamos el estado y paramos el bot
+                    activate = !activate;
                     stopEngines();
                     break;
                 case Left:
