@@ -21,7 +21,7 @@
 #include "dyn_emu.h"
 
 #define SIM_STEP_MS_TIME 10
-#define MAX_SIM_STEPS 120000
+#define MAX_SIM_STEPS 100000
 
 typedef struct _robot_pos {
     uint16_t x;
