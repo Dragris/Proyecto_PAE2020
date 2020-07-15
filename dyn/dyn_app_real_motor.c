@@ -1,3 +1,11 @@
+/*
+ * dyn_real_app_sensor.c
+ *
+ *      Author: Dragris
+ *
+ * Real engine movement functions
+ * (Check before using)
+ */
 #include "dyn_app_motor.h"
 /**
  *

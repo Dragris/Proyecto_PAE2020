@@ -52,8 +52,28 @@ int dyn_read_byte(uint8_t module_id, DYN_REG_t reg_addr, uint8_t* reg_read_val) 
 	reply = RxTxPacket(module_id, 2, DYN_INSTR__READ, parameters);
 	*reg_read_val = reply.StatusPacket[5];
 
-	return (reply.tx_err < 1) | reply.time_out;
+	return (reply.tx_err << 1) | reply.time_out;
 }
+
+int dyn_read(uint8_t module_id, DYN_REG_t reg_addr, uint8_t reg_read_val[], uint8_t length){
+    uint8_t parameters[2]; //Longitud de parámetros está fijada a dos como indica el manual
+    struct RxReturn reply; //Struct de la respuesta
+    int i; //Counter
+
+    /**
+     * Parámetros vienen en orden address + length
+     */
+    parameters[0] = reg_addr;
+    parameters[1] = length;
+    reply = RxTxPacket(module_id, 2, DYN_INSTR__READ, parameters);
+
+    for(i = 0; i < length; i++){ //Añadimos los valores al array que recibirá los datos
+        reg_read_val[i] = reply.StatusPacket[5+i];
+    }
+    //Devolvemos el posible error generado
+    return (reply.tx_err << 1) | reply.time_out;
+}
+
 
 /**
  * Multi-byte write instruction

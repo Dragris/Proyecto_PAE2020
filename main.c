@@ -44,6 +44,7 @@ int main(void) {
     dyn_led_read(1, &tmp);
     assert(tmp == 1);
 
+
     printf("\n************************\n");
     printf("Test passed successfully\n");
 
@@ -59,8 +60,6 @@ int main(void) {
     stopEngines();
 
 
-
-    //endlessMove(norm_speed, FORWARD);
     while (estado != Quit) {
         if (simulator_finished) {
             break;

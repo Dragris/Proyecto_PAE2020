@@ -1,3 +1,9 @@
+/*
+ * dyn_app_motor.h
+ *
+ *      Author: Dragris
+ *
+ */
 #ifndef DYNAMIXELLIB_H_
 #define DYNAMIXELLIB_H_
 

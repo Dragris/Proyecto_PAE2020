@@ -1,3 +1,11 @@
+/*
+ * dyn_app_motor.c
+ *
+ *      Author: Dragris
+ *
+ * Engine movement functions
+ */
+
 #include <zconf.h>
 #include "dyn_app_motor.h"
 /**
